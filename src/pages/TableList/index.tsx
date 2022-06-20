@@ -11,8 +11,11 @@ import {
   ProTable,
 } from '@ant-design/pro-components';
 import { Button, Drawer, Input, message } from 'antd';
+// import { json } from 'express';
 import React, { useRef, useState } from 'react';
+// import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'umi';
+import SongsTable from './components/SongsTable';
 import type { FormValueType } from './components/UpdateForm';
 import UpdateForm from './components/UpdateForm';
 
@@ -243,7 +246,7 @@ const TableList: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<API.RuleListItem, API.PageParams>
+      <ProTable
         headerTitle={intl.formatMessage({
           id: 'pages.searchTable.title',
           defaultMessage: 'Enquiry form',
@@ -272,6 +275,18 @@ const TableList: React.FC = () => {
           },
         }}
       />
+      {/* Table 2 */}
+
+      <SongsTable />
+      {/* <ProTable
+      headerTitle={intl.formatMessage({
+        id: 'pages.listSongsTable.title',
+        defaultMessage: 'Enquiry form',
+      })}
+      
+      
+
+      /> */}
       {selectedRowsState?.length > 0 && (
         <FooterToolbar
           extra={
