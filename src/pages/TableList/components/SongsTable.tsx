@@ -1,92 +1,179 @@
-import { Table } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { Button, Input, Space, Table } from 'antd';
 import 'antd/dist/antd.css';
-import { useEffect, useState } from 'react';
+import qs from 'qs';
+import { useEffect, useRef, useState } from 'react';
+
+import AddNewSongBtn from './AddNewSong-Btn';
+
+const getRandomuserParams = (params: any) => ({
+  results: params.pagination?.pageSize,
+  page: params.pagination?.current,
+  ...params,
+});
 
 const SongsTable = () => {
-  // const [listSongs, setListSongs] = useState([]);
-
-  // const getAPI = async () => {
-  //   const url = 'https://music-i-like.herokuapp.com/api/v1/songs';
-  //   const response = await fetch(url);
-  //   const data = await response.json();
-  //   // console.log(data.data)
-  //   setListSongs(data.data);
-  // };
-
-  // useEffect(() => {
-  //   getAPI();
-  // }, []);
-  // console.log(listSongs);
-
-  // return (
-  //   <>
-  //     <h1>SONGS TABLE</h1>
-  //     <table border="1" cellspacing="0" cellpadding="5">
-  //       <thead>
-  //         <tr>
-  //           {/* <th>ID</th> */}
-  //           <th>NAME</th>
-  //           <th>SINGER</th>
-  //           <th>DESCRIPTION</th>
-  //           <th>LINK</th>
-  //         </tr>
-  //       </thead>
-
-  //       <tbody>
-  //         {listSongs.map((item: any, value) => (
-  //           <tr key={value}>
-  //             {/* <td key={value}>{item.id}</td> */}
-  //             <td key={value}>{item.name}</td>
-  //             <td key={value}>{item.singer}</td>
-  //             <td key={value}>{item.description}</td>
-  //             <td key={value}>{item.link}</td>
-  //           </tr>
-  //         ))}
-  //       </tbody>
-  //     </table>
-  //   </>
-  // );
-
   const [listSongs, setListSongs] = useState([]);
+  // const [searchText, setSearchText] = useState('');
+  // const [searchedColumn, setSearchedColumn] = useState('');
+  const searchInput = useRef<any>(null);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+  });
 
-  const getAPI = async () => {
-    const url = 'https://music-i-like.herokuapp.com/api/v1/songs';
+  const getAPI = async (params: any = {}) => {
+    const url = `https://music-i-like.herokuapp.com/api/v1/songs?${qs.stringify(
+      getRandomuserParams(params),
+    )}`;
     const response = await fetch(url);
     const data = await response.json();
-    // console.log(data.data)
     setListSongs(data.data);
+    setPagination({
+      ...params.pagination,
+      total: 200,
+    });
   };
 
   useEffect(() => {
-    getAPI();
+    getAPI({
+      pagination,
+    });
   }, []);
+
+  const handleTableChange = (newPagination: any, filters: any, sorter: any) => {
+    getAPI({
+      sortField: sorter.field,
+      sortOrder: sorter.order,
+      pagination: newPagination,
+      ...filters,
+    });
+  };
+
+  const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleReset = (clearFilters: any) => {
+    clearFilters();
+    setSearchText('');
+  };
+
+  const getColumnSearchProps = (dataIndex: any) => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: 'block',
+          }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({
+                closeDropdown: false,
+              });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: any) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? '#1890ff' : undefined,
+        }}
+      />
+    ),
+    onFilter: (value: any, record: any) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: (visible: any) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    // render: (text) =>
+    //   searchedColumn === dataIndex ? (
+    //     <Highlighter
+    //       highlightStyle={{
+    //         backgroundColor: '#ffc069',
+    //         padding: 0,
+    //       }}
+    //       searchWords={[searchText]}
+    //       autoEscape
+    //       textToHighlight={text ? text.toString() : ''}
+    //     />
+    //   ) : (
+    //     text
+    //   ),
+  });
 
   const columns = [
     {
       title: 'Name',
       dataIndex: 'name',
+      key: 'name',
+      ...getColumnSearchProps('name'),
     },
     {
       title: 'Singer',
       dataIndex: 'singer',
+      key: 'singer',
+      ...getColumnSearchProps('singer'),
     },
     {
       title: 'Description',
       dataIndex: 'description',
+      key: 'description',
     },
-    // {
-    //   title: 'Link',
-    //   dataIndex: 'link',
-    // },
     {
       title: 'Update at',
       dataIndex: 'update',
+      key: 'update',
     },
   ];
 
-  const data = [];
+  const data: any = [];
 
-  listSongs.map((values, index) => {
+  listSongs.map((values: any, index: any) => {
     data.push({
       key: index,
       name: values.name,
@@ -101,7 +188,7 @@ const SongsTable = () => {
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
-  const onSelectChange = (newSelectedRowKeys) => {
+  const onSelectChange = (newSelectedRowKeys: any) => {
     console.log('selectedRowKeys changed: ', selectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
@@ -116,9 +203,9 @@ const SongsTable = () => {
       {
         key: 'odd',
         text: 'Select Odd Row',
-        onSelect: (changableRowKeys) => {
+        onSelect: (changableRowKeys: any) => {
           let newSelectedRowKeys = [];
-          newSelectedRowKeys = changableRowKeys.filter((_, index) => {
+          newSelectedRowKeys = changableRowKeys.filter((_: any, index: any) => {
             if (index % 2 !== 0) {
               return false;
             }
@@ -132,9 +219,9 @@ const SongsTable = () => {
       {
         key: 'even',
         text: 'Select Even Row',
-        onSelect: (changableRowKeys) => {
+        onSelect: (changableRowKeys: any) => {
           let newSelectedRowKeys = [];
-          newSelectedRowKeys = changableRowKeys.filter((_, index) => {
+          newSelectedRowKeys = changableRowKeys.filter((_: any, index: any) => {
             if (index % 2 !== 0) {
               return true;
             }
@@ -149,7 +236,14 @@ const SongsTable = () => {
   return (
     <div style={{ backgroundColor: 'white', padding: '30px', marginTop: '30px' }}>
       <h3>Songs Table</h3>
-      <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
+      <Table
+        rowSelection={rowSelection}
+        columns={columns}
+        dataSource={data}
+        pagination={pagination}
+        onChange={handleTableChange}
+      />
+      <AddNewSongBtn />
     </div>
   );
 };
