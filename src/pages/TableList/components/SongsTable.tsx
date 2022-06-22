@@ -19,19 +19,21 @@ const SongsTable = () => {
   const searchInput = useRef<any>(null);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 11,
   });
 
   const getAPI = async (params: any = {}) => {
     const url = `https://music-i-like.herokuapp.com/api/v1/songs?${qs.stringify(
       getRandomuserParams(params),
     )}`;
+    // const url = `https://music-i-like.herokuapp.com/api/v1/songs`;
     const response = await fetch(url);
     const data = await response.json();
+    console.log(data.data, 'data.data');
     setListSongs(data.data);
     setPagination({
       ...params.pagination,
-      total: 200,
+      total: 120,
     });
   };
 
@@ -50,15 +52,15 @@ const SongsTable = () => {
     });
   };
 
-  const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
+  const handleSearch = (selectedKeys: any, confirm: any) => {
     confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
+    // setSearchText(selectedKeys[0]);
+    // setSearchedColumn(dataIndex);
   };
 
   const handleReset = (clearFilters: any) => {
     clearFilters();
-    setSearchText('');
+    // setSearchText('');
   };
 
   const getColumnSearchProps = (dataIndex: any) => ({
@@ -73,7 +75,7 @@ const SongsTable = () => {
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          onPressEnter={() => handleSearch(selectedKeys, confirm)}
           style={{
             marginBottom: 8,
             display: 'block',
@@ -82,7 +84,7 @@ const SongsTable = () => {
         <Space>
           <Button
             type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            onClick={() => handleSearch(selectedKeys, confirm)}
             icon={<SearchOutlined />}
             size="small"
             style={{
@@ -107,8 +109,8 @@ const SongsTable = () => {
               confirm({
                 closeDropdown: false,
               });
-              setSearchText(selectedKeys[0]);
-              setSearchedColumn(dataIndex);
+              // setSearchText(selectedKeys[0]);
+              // setSearchedColumn(dataIndex);
             }}
           >
             Filter
@@ -233,6 +235,17 @@ const SongsTable = () => {
       },
     ],
   };
+
+  // Function thêm bài hát mới
+  const addSong = (newSongInput: any, singerInput: any, descInput: any, dateInput: any) => {
+    let newSongList: any = [...listSongs];
+    newSongList = [
+      ...newSongList,
+      { name: newSongInput, singer: singerInput, description: descInput, updated_at: dateInput },
+    ];
+    setListSongs(newSongList);
+  };
+
   return (
     <div style={{ backgroundColor: 'white', padding: '30px', marginTop: '30px' }}>
       <h3>Songs Table</h3>
@@ -243,7 +256,7 @@ const SongsTable = () => {
         pagination={pagination}
         onChange={handleTableChange}
       />
-      <AddNewSongBtn />
+      <AddNewSongBtn addSong={addSong} />
     </div>
   );
 };

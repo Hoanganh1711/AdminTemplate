@@ -1,5 +1,4 @@
-import { addRule, removeRule, rule, updateRule } from '@/services/ant-design-pro/api';
-import { PlusOutlined } from '@ant-design/icons';
+import { addRule, removeRule, updateRule } from '@/services/ant-design-pro/api';
 import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import {
   FooterToolbar,
@@ -8,7 +7,6 @@ import {
   ProDescriptions,
   ProFormText,
   ProFormTextArea,
-  ProTable,
 } from '@ant-design/pro-components';
 import { Button, Drawer, Input, message } from 'antd';
 // import { json } from 'express';
@@ -246,7 +244,7 @@ const TableList: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable
+      {/* <ProTable
         headerTitle={intl.formatMessage({
           id: 'pages.searchTable.title',
           defaultMessage: 'Enquiry form',
@@ -274,8 +272,8 @@ const TableList: React.FC = () => {
             setSelectedRows(selectedRows);
           },
         }}
-      />
-      {/* Table 2 */}
+      /> */}
+      {/* List Song Table */}
 
       <SongsTable />
       {/* <ProTable
