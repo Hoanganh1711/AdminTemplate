@@ -26,7 +26,6 @@ const SongsTable = () => {
     const url = `https://music-i-like.herokuapp.com/api/v1/songs?${qs.stringify(
       getRandomuserParams(params),
     )}`;
-    // const url = `https://music-i-like.herokuapp.com/api/v1/songs`;
     const response = await fetch(url);
     const data = await response.json();
     console.log(data.data, 'data.data');

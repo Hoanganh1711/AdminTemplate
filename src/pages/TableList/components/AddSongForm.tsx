@@ -1,6 +1,7 @@
 import { Button, Form, Input } from 'antd';
 import 'antd/dist/antd.css';
 // import { useEffect } from 'react';
+import { notification } from 'antd';
 import { useState } from 'react';
 
 const AddSongForm = ({ addSong }: any) => {
@@ -30,8 +31,7 @@ const AddSongForm = ({ addSong }: any) => {
     }
   };
 
-  // Lấy dữ liệu từ form nhập
-
+  // Lấy dữ liệu từ form
   const handleSongNameChange = (e: any) => {
     setNewSongInput(e.target.value);
   };
@@ -45,12 +45,21 @@ const AddSongForm = ({ addSong }: any) => {
   };
 
   const handleDateChange = (e: any) => {
-    setDateInput(e._d);
+    setDateInput(e.target.value);
+  };
+
+  // Hiển thị thông báo đăng bài hát thành công
+  const openNotificationWithIcon = (type: any, placement: any) => {
+    notification[type]({
+      message: 'Success',
+      description: 'Thêm bài hát mới thành công',
+      placement
+    });
   };
 
   const handleSubmit = (e: any) => {
-    //Check error-message
     validateInput();
+    //Check error-message
     const formElement: any = document.querySelector('.form');
     const errorElement: any = formElement.querySelectorAll('.error-message');
     const arrErrorElement: any = [];
@@ -61,13 +70,14 @@ const AddSongForm = ({ addSong }: any) => {
 
     const checkErrorElement = arrErrorElement.every((value: any) => value === '');
     if (checkErrorElement) {
-        e.preventDefault();
-        addSong(newSongInput, singerInput, descInput, dateInput);
-        setNewSongInput('');
-        setSingerInput('');
-        setDescInput('');
-        setDateInput('');
-        document.querySelectorAll('.error-message').innerHTML = "";
+      e.preventDefault();
+      addSong(newSongInput, singerInput, descInput, dateInput);
+      setNewSongInput('');
+      setSingerInput('');
+      setDescInput('');
+      setDateInput('');
+      openNotificationWithIcon('success', 'bottomRight');
+      errorElement.innerHTML = '';
     }
   };
 
