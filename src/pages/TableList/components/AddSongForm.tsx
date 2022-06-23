@@ -21,7 +21,9 @@ const AddSongForm = ({ addSong }: any) => {
     const inputElement: any = formElement.querySelectorAll('.form-input');
     for (let i = 0; i < inputElement.length; i++) {
       if (inputElement[i].value === '') {
-        inputElement[i].parentElement.querySelector('.error-message').innerText = `Please enter your ${inputElement[i].id}`;
+        inputElement[i].parentElement.querySelector(
+          '.error-message',
+        ).innerText = `Please Enter ${inputElement[i].id}`;
       } else {
         inputElement[i].parentElement.querySelector('.error-message').innerText = '';
       }
@@ -46,33 +48,32 @@ const AddSongForm = ({ addSong }: any) => {
     setDateInput(e._d);
   };
 
-
   const handleSubmit = (e: any) => {
     //Check error-message
+    validateInput();
     const formElement: any = document.querySelector('.form');
-    const errorElement: any = formElement.querySelectorAll('.error-mesage');
-    const arrErrorElement = [];
+    const errorElement: any = formElement.querySelectorAll('.error-message');
+    const arrErrorElement: any = [];
     for (let i = 0; i < errorElement.length; i++) {
       arrErrorElement.push(errorElement[i].innerText);
     }
+    console.log(arrErrorElement);
 
-    const checkErrorElement = arrErrorElement.every((value) => value === '');
-    if (!checkErrorElement) {
-      e.preventDefault();
-      addSong(newSongInput, singerInput, descInput, dateInput);
-      setNewSongInput('');
-      setSingerInput('');
-      setDescInput('');
-      setDateInput('');
-    } else {
-      validateInput();
+    const checkErrorElement = arrErrorElement.every((value: any) => value === '');
+    if (checkErrorElement) {
+        e.preventDefault();
+        addSong(newSongInput, singerInput, descInput, dateInput);
+        setNewSongInput('');
+        setSingerInput('');
+        setDescInput('');
+        setDateInput('');
+        document.querySelectorAll('.error-message').innerHTML = "";
     }
   };
 
   return (
     <Form
       className="form"
-      // onSubmitCapture={handleSubmit}
       labelCol={{
         span: 4,
       }}
