@@ -170,18 +170,31 @@ const SongsTable = () => {
       dataIndex: 'update',
       key: 'update',
     },
+    {
+      title: 'Action',
+      dataIndex: 'action',
+      key: 'action',
+    },
   ];
+
+  // Function xóa bài hát
+  const deleteSong = (index: any) => {
+    const arrListSongs = [...listSongs];
+    arrListSongs.splice(index, 1)
+    setListSongs(arrListSongs)
+  }
 
   const data: any = [];
 
   listSongs.map((values: any, index: any) => {
     data.push({
       key: index,
-      name: values.name,
+      name: <a href={values.link}>{values.name}</a>,
       singer: values.singer,
       description: values.description,
       // link: values.link,
       update: values.updated_at,
+      action: <a onClick={() => deleteSong(index)}>Delete</a>
     });
   });
 
@@ -244,6 +257,8 @@ const SongsTable = () => {
     ];
     setListSongs(newSongList);
   };
+
+  
 
   return (
     <div style={{ backgroundColor: 'white', padding: '30px', marginTop: '30px' }}>

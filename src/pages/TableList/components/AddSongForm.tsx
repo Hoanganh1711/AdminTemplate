@@ -1,6 +1,5 @@
 import { Button, Form, Input } from 'antd';
 import 'antd/dist/antd.css';
-// import { useEffect } from 'react';
 import { notification } from 'antd';
 import { useState } from 'react';
 
@@ -52,7 +51,7 @@ const AddSongForm = ({ addSong }: any) => {
   const openNotificationWithIcon = (type: any, placement: any) => {
     notification[type]({
       message: 'Success',
-      description: 'Thêm bài hát mới thành công',
+      description: 'Thêm bài hát mới thành công !',
       placement
     });
   };
